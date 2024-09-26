@@ -1,0 +1,19 @@
+{
+    "name": "alaaelsaid/laravel-wati-whatsapp",
+    "description": "This Package for integration with wati servive",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Alaaelsaid\\LaravelWatiWhatsapp\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Alaa Elsaid",
+            "email": "alaa4cat@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
