@@ -1,39 +1,84 @@
+# Laravel WATI WhatsApp Integration Package
+
+A clean, modern Laravel package for integrating with the **WATI WhatsApp Business API**.
+
 ## Installation
 
-You can install the package via [Composer](https://getcomposer.org).
+Install the package via [Composer](https://getcomposer.org):
 
 ```bash
 composer require alaaelsaid/laravel-wati-whatsapp
 ```
 
-## Publishing
+## Publishing Configuration
 
-After install publish file config
+Publish the config file:
 
 ```bash
-php artisan vendor:publish --tag="wati"
+php artisan vendor:publish --tag="wati-config"
 ```
 
-## Env
-In the .env file you can add those keys:
+## Environment Variables
+
+Add the following keys to your `.env` file:
 
 ```dotenv
-WATI_TEMPLATE=template_name
-WATI_ENDPOINT=endpoint
-WATI_ACCESS_TOKEN=access_token
+WATI_TEMPLATE=your_default_template_name
+WATI_ENDPOINT=https://live-server-123.wati.io
+WATI_ACCESS_TOKEN=your_wati_access_token
+WATI_DEFAULT_COUNTRY_CODE=966
 ```
 
 ## Usage
 
+### 1. Sending Single WhatsApp Template Message
+
 ```php
 use Alaaelsaid\LaravelWatiWhatsapp\Facade\Whatsapp;
 
-// to send single phone number;
-Whatsapp::send('+201007153686', "hello world", "John Smith");
+// Send using default template from config
+Whatsapp::send('+966501234567', "Hello world", "John Smith");
 
-// to send multi phone numbers;
-// $users => collection of users to send a mutiple phone numbers;
-// column => whatsapp column in users table;
-// name => the column name of the user in the users table ex: [ name, fullname ];
+// Send using custom template & custom parameters
+Whatsapp::send(
+    phone: '+966501234567',
+    template: 'order_update_template',
+    customParams: [
+        ['name' => 'name', 'value' => 'John Smith'],
+        ['name' => 'order_id', 'value' => 'ORD-9921'],
+        ['name' => 'status', 'value' => 'Shipped']
+    ]
+);
+```
 
-Whatsapp::multi(message: "hello world", users: $users, column: 'whatsapp', name: 'John Smith'');
+### 2. Sending Bulk Template Messages (`multi`)
+
+```php
+// $users can be an array or Eloquent collection
+Whatsapp::multi(
+    message: "Your appointment is confirmed.",
+    users: $users,
+    column: 'phone',
+    name: 'name'
+);
+```
+
+### 3. Sending Direct Session Message (`sendSessionMessage`)
+
+Send direct session text message outside of template broadcasts:
+
+```php
+Whatsapp::sendSessionMessage('+966501234567', 'Thank you for reaching out!');
+```
+
+### 4. Phone Number Utility (`MobilePhone`)
+
+```php
+use Alaaelsaid\LaravelWatiWhatsapp\Facade\MobilePhone;
+
+// Convert Arabic numerals to English numerals
+$number = MobilePhone::to_english_number('۰۱۲۳٤٥٦۷۸۹'); // Outputs: "0123456789"
+
+// Format phone with country prefix
+$prefixed = MobilePhone::setCountryCode('966')->prefixed('0501234567'); // Outputs: "+966501234567"
+```

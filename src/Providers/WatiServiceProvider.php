@@ -11,13 +11,13 @@ class WatiServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__ . '/../../config/wati.php' => config_path('wati.php'),
-        ],'wati');
+        ], 'wati-config');
     }
 
     public function register(): void
     {
-        $this->app->singleton('Wati', fn() => new WatiService());
+        $this->app->singleton('Wati', fn () => new WatiService());
 
-        $this->mergeConfigFrom(__DIR__ . '/../../config/wati.php','wati');
+        $this->mergeConfigFrom(__DIR__ . '/../../config/wati.php', 'wati');
     }
 }

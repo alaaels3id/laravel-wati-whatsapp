@@ -4,33 +4,39 @@ namespace Alaaelsaid\LaravelWatiWhatsapp\Facade;
 
 class MobilePhone
 {
-    public function __construct(public $country_code) {}
+    public function __construct(public $country_code = '966') {}
 
-    public static function setCountryCode($country_code = '966'): MobilePhone
+    public static function setCountryCode($country_code = '966'): static
     {
-        return new static(str($country_code)->replaceFirst('+',''));
+        $code = (string) (config('wati.default_country_code') ?? $country_code);
+
+        return new static(str($code)->replaceFirst('+', '')->value());
     }
 
     public function plain($number): string
     {
-        if (! $number) return trans('back.no-value');
+        if (!$number) {
+            return '';
+        }
 
         $_num = self::convertNumTo($number);
 
         $remove_zero = self::isPhoneStartsWith($_num) ? self::removeZero($_num) : $_num;
 
-        $country_code = $this->country_code;
+        $country_code = (string) $this->country_code;
 
         return self::hasPrefix($_num, $country_code) ? self::removePrefix($remove_zero, $country_code) : $remove_zero;
     }
 
     public function setPrefix($number, $prefix = ''): string
     {
-        if (! $number) return trans('back.no-value');
+        if (!$number) {
+            return '';
+        }
 
-        $code = $this->country_code;
+        $code = (string) $this->country_code;
 
-        return self::hasPrefix($number, $code) ? $prefix.self::convertNumTo($number) : $prefix.self::convertNumTo($code).self::plain($number);
+        return self::hasPrefix($number, $code) ? $prefix . self::convertNumTo($number) : $prefix . self::convertNumTo($code) . self::plain($number);
     }
 
     public function international($number): string
@@ -48,8 +54,9 @@ class MobilePhone
         return $to == 'ar' ? self::to_arabic_number($num) : self::to_english_number($num);
     }
 
-    public static function to_arabic_number($number): array|string
+    public static function to_arabic_number($number): string
     {
+        $number = (string) $number;
         $number = str_replace('1', '۱', $number);
         $number = str_replace('2', '۲', $number);
         $number = str_replace('3', '۳', $number);
@@ -63,12 +70,13 @@ class MobilePhone
         return str_replace('0', '۰', $number);
     }
 
-    public static function to_english_number($number): array|string
+    public static function to_english_number($number): string
     {
+        $number = (string) $number;
         $number = str_replace('۱', '1', $number);
         $number = str_replace('۲', '2', $number);
         $number = str_replace('۳', '3', $number);
-        $number = str_replace('٤', '3', $number);
+        $number = str_replace('٤', '4', $number);
         $number = str_replace('٥', '5', $number);
         $number = str_replace('٦', '6', $number);
         $number = str_replace('۷', '7', $number);
@@ -80,12 +88,17 @@ class MobilePhone
 
     private function isPhoneStartsWith($number, $with = '0'): bool
     {
-        return head(str_split($number)) == $with;
+        $chars = str_split((string) $number);
+
+        return reset($chars) === $with;
     }
 
     private function hasPrefix($number, $code): bool
     {
-        return head(str_split($number, strlen($code))) == $code;
+        $len   = strlen((string) $code);
+        $parts = str_split((string) $number, $len);
+
+        return reset($parts) === (string) $code;
     }
 
     private function removePrefix($number, $country_code): string
@@ -98,3 +111,4 @@ class MobilePhone
         return str($number)->replaceFirst('0', '')->value();
     }
 }
+

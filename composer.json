@@ -1,19 +1,48 @@
 {
     "name": "alaaelsaid/laravel-wati-whatsapp",
-    "description": "This Package for integration with wati servive",
+    "description": "A Laravel package for integration with WATI WhatsApp service",
     "type": "library",
+    "keywords": ["laravel", "whatsapp", "wati", "messaging"],
     "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "Alaaelsaid\\LaravelWatiWhatsapp\\": "src/"
-        }
-    },
     "authors": [
         {
             "name": "Alaa Elsaid",
             "email": "alaa4cat@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
-    "require": {}
+    "require": {
+        "php": "^8.2 | ^8.3 | ^8.4",
+        "illuminate/support": "^10.0 | ^11.0 | ^12.0",
+        "guzzlehttp/guzzle": "^7.8"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^8.0 | ^9.0 | ^10.0",
+        "phpunit/phpunit": "^10.0 | ^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Alaaelsaid\\LaravelWatiWhatsapp\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Alaaelsaid\\LaravelWatiWhatsapp\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        },
+        "laravel": {
+            "providers": [
+                "Alaaelsaid\\LaravelWatiWhatsapp\\Providers\\WatiServiceProvider"
+            ],
+            "aliases": {
+                "Whatsapp": "Alaaelsaid\\LaravelWatiWhatsapp\\Facade\\Whatsapp"
+            }
+        }
+    },
+    "prefer-stable": true,
+    "minimum-stability": "stable"
 }
+
